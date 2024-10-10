@@ -1,6 +1,5 @@
-// main.dart
 import 'dart:io';
-import 'user.dart'; 
+import 'user.dart';
 import 'dart:math';
 import 'Product.dart';
 import 'ShoppingCart.dart';
@@ -9,80 +8,82 @@ class MainApp {
   User user;
   ShoppingCart cart;
 
+  // Constructor to initialize the user and shopping cart
   MainApp(this.user, this.cart);
 
-  // Kullanıcının yaşına göre indirim uygula
+  // Apply discount based on the user's age
   void applyDiscount() {
     if (user.age != null) {
       if (user.age! < 18) {
-        user.totalSpent *= 0.90; // %10 indirim
-        print('18 yaş altısınız, %10 indirim uygulandı.');
+        user.totalSpent *= 0.90; // 10% discount
+        print('You are under 18, a 10% discount has been applied.');
       } else if (user.age! >= 18 && user.age! <= 60) {
-        user.totalSpent *= 0.95; // %5 indirim
-        print('18-60 yaş aralığındasınız, %5 indirim uygulandı.');
+        user.totalSpent *= 0.95; // 5% discount
+        print('You are between 18 and 60 years old, a 5% discount has been applied.');
       } else if (user.age! > 60) {
-        user.totalSpent *= 0.85; // %15 indirim
-        print('60 yaş üstüsünüz, %15 indirim uygulandı.');
+        user.totalSpent *= 0.85; // 15% discount
+        print('You are over 60 years old, a 15% discount has been applied.');
       }
     }
   }
 
+  // Display user information
   void displayUserInfo() {
-    print('Kullanıcı Yaşı: ${user.age}');
-    print('Müşteri Numarası: ${user.customerId}');
-    print('Toplam Harcama (İndirimli): ${user.totalSpent.toStringAsFixed(2)} TL');
+    print('User Age: ${user.age}');
+    print('Customer ID: ${user.customerId}');
+    print('Total Spending (Discounted): ${user.totalSpent.toStringAsFixed(2)} TL');
   }
 }
 
 void main() {
-  // Kullanıcıdan yaş ve toplam harcama bilgisi alın
-  stdout.write('Yaşınızı girin: ');
+  // Get age and total spending information from the user
+  stdout.write('Enter your age: ');
   String? ageInput = stdin.readLineSync();
 
   var random = Random();
   int customerId = random.nextInt(100) + 1;
 
-  stdout.write('Toplam harcamanızı girin: ');
+  stdout.write('Enter your total spending: ');
   String? totalSpentInput = stdin.readLineSync();
 
+  // Validate user inputs
   if (ageInput != null && ageInput.isNotEmpty && totalSpentInput != null && totalSpentInput.isNotEmpty) {
     int age = int.parse(ageInput);
     double totalSpent = double.parse(totalSpentInput);
 
-    // Kullanıcı oluşturma
+    // Create a User instance
     User user = User(age: age, customerId: customerId, totalSpent: totalSpent);
     ShoppingCart cart = ShoppingCart();
     MainApp app = MainApp(user, cart);
 
-    // Ürün ekletme döngüsü
+    // Product addition loop
     String? continueShopping;
     do {
-      stdout.write('Ürün ismi girin: ');
+      stdout.write('Enter product name: ');
       String? productName = stdin.readLineSync();
 
-      stdout.write('Ürün fiyatını girin: ');
+      stdout.write('Enter product price: ');
       String? productPriceInput = stdin.readLineSync();
 
+      // Validate product inputs
       if (productName != null && productPriceInput != null && productPriceInput.isNotEmpty) {
         double productPrice = double.parse(productPriceInput);
         cart.addProduct(Product(productName, productPrice));
       } else {
-        print('Geçersiz giriş.');
+        print('Invalid input.');
       }
 
       cart.calculateTotal();
 
-      stdout.write('Başka bir ürün eklemek ister misiniz? (e/h): ');
+      // Ask if the user wants to continue shopping
+      stdout.write('Would you like to add another product? (y/n): ');
       continueShopping = stdin.readLineSync();
-    } while (continueShopping == 'e' || continueShopping == 'E');
+    } while (continueShopping == 'y' || continueShopping == 'Y');
 
-    // İndirim uygula ve kullanıcı bilgilerini göster
+    // Apply discount and display user information
     app.applyDiscount();
     app.displayUserInfo();
   } else {
-    print('Geçersiz giriş.');
+    print('Invalid input.');
   }
 }
-
-  
-
